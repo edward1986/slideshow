@@ -16,14 +16,14 @@ os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
 # Sample Subtitle Data (time_start, time_end, text)
 subtitles = [
-    (0, 5, "Welcome to an amazing journey!"),
-    (5, 10, "This is a futuristic city at night."),
-    (10, 15, "A sunset over the ocean, calm and peaceful."),
-    (15, 20, "Snow-covered mountains, reaching high."),
-    (20, 25, "A fantasy castle floating in the sky."),
-    (25, 30, "Neon cyberpunk streets full of energy."),
-    (30, 35, "A forest with a peaceful river."),
-    (35, 40, "The journey continues..."),
+    ((0, 5), "Welcome to an amazing journey!"),
+    ((5, 10), "This is a futuristic city at night."),
+    ((10, 15), "A sunset over the ocean, calm and peaceful."),
+    ((15, 20), "Snow-covered mountains, reaching high."),
+    ((20, 25), "A fantasy castle floating in the sky."),
+    ((25, 30), "Neon cyberpunk streets full of energy."),
+    ((30, 35), "A forest with a peaceful river."),
+    ((35, 40), "The journey continues..."),
 ]
 
 # Download images
