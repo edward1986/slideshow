@@ -27,23 +27,25 @@ def bounce_effect(t):
     bounce_height = 40 * abs((t % 0.6) - 0.3) * 5  # Adjust bounce effect
     return ("center", base_y - bounce_height)
 
-# ✅ Generate Captions with Bounce Animation
 def create_bounce_captions():
     caption_clips = []
     for start, end, text in captions:
+        # ✅ Background box for contrast
+        bg = ColorClip(size=(1000, 100), color=(0, 0, 0)).set_duration(end - start).set_position(("center", 1400)).set_opacity(0.5)
+
         txt_clip = TextClip(
             text,
-            fontsize=80,
-            font="Arial",  # ✅ Use default system font
+            fontsize=60,  # ✅ Adjust font size to fit better
+            font="Arial",
             color="white",
             stroke_color="black",
-            stroke_width=5,
-            method="label",  # ✅ Force PIL (Prevents ImageMagick errors)
+            stroke_width=3,
+            method="label",
             size=(900, None),
         ).set_position(bounce_effect).set_start(start).set_end(end).fadein(0.5).fadeout(0.5)
 
-        caption_clips.append(txt_clip)
-    
+        caption_clips.append(CompositeVideoClip([bg, txt_clip]))  # ✅ Combine text & background
+
     return CompositeVideoClip(caption_clips)
 
 # ✅ Generate captions with bounce effect
