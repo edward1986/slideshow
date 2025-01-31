@@ -41,7 +41,7 @@ jobs:
       - name: Upgrade pip & Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --no-cache-dir --force-reinstall moviepy requests imageio[ffmpeg] numpy decorator tqdm pillow==9.4.0
+          python -m pip install --no-cache-dir --force-reinstall moviepy==1.0.3 requests imageio[ffmpeg] numpy decorator tqdm pillow==9.4.0
 
       - name: Run slideshow script
         run: python slideshow.py
