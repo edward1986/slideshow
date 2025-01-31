@@ -11,7 +11,7 @@ words = [
 ]
 
 # Load video
-video = VideoFileClip("input_video.mp4")
+video = VideoFileClip("shorts_with_bounce_captions.mp4")
 
 # Create animated captions
 text_clips = []
