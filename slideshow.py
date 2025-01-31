@@ -65,18 +65,29 @@ vertical_clip = clip.resize(height=1920).crop(x_center=clip.w // 2, width=1080, 
 # ✅ Slow Zoom Effect
 zoomed_clip = vertical_clip.fx(vfx.resize, lambda t: 1 + (ZOOM_FACTOR - 1) * (t / clip.duration))
 
-def subtitle_generator(txt):
-    """Stylish text effect for subtitles"""
-    return TextClip(txt, fontsize=60, font="Arial-Bold", color="white", stroke_color="black", stroke_width=3)
+# ✅ Generate Scrolling Subtitle Clip
+def create_scrolling_subtitles():
+    """Creates a vertically scrolling subtitle effect"""
+    subtitle_clips = []
+    y_start = 1920  # Start position (off-screen)
+    line_height = 80  # Distance between lines
 
-# ✅ Use a lambda function to avoid TypeError
-subtitles_clip = SubtitlesClip(subtitles, make_textclip=lambda txt: subtitle_generator(txt))
+    for i, (start_time, text) in enumerate(subtitles):
+        txt_clip = TextClip(
+            text, fontsize=60, font="Arial-Bold", color="white", stroke_color="black", stroke_width=3, method="caption"
+        ).set_duration(15).set_position(("center", y_start - (i * line_height)))
 
-# ✅ Position subtitles at the bottom and fade-in effect
-styled_subtitles = subtitles_clip.set_position(("center", "bottom")).fadein(0.5)
+        subtitle_clips.append(txt_clip)
 
-# ✅ Combine Video & Subtitles
-final_clip = CompositeVideoClip([zoomed_clip, styled_subtitles])
+    return CompositeVideoClip(subtitle_clips).set_duration(15).fx(vfx.scroll, 0, -600)
 
-# Export final video
-final_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
+# ✅ Generate scrolling subtitles
+scrolling_subtitles = create_scrolling_subtitles()
+
+# ✅ Add to video
+final_clip = CompositeVideoClip([zoomed_clip, scrolling_subtitles])
+
+# ✅ Export final video
+final_clip.write_videofile("slideshow_with_scrolling_subtitles.mp4", fps=30)
+
+print("🎬 Slideshow video with scrolling subtitles generated successfully!")
