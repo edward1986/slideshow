@@ -22,13 +22,17 @@ jobs:
       - name: Upgrade pip & Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --no-cache-dir --upgrade moviepy requests imageio[ffmpeg] numpy decorator tqdm
+          python -m pip install --no-cache-dir --upgrade moviepy requests imageio[ffmpeg] numpy decorator tqdm
 
       - name: Debug Installed Packages
-        run: pip list  # This will print all installed Python packages
+        run: python -m pip list  # Ensures MoviePy is installed in the correct Python
 
-      - name: Verify MoviePy Installation
-        run: python -c "import moviepy.editor; print('✅ MoviePy is installed successfully!')"
+      - name: Force Correct Python Path
+        run: |
+          echo "Python version: $(python --version)"
+          echo "Python path: $(which python)"
+          python -c "import sys; print(sys.path)"
+          python -c "import moviepy.editor; print('✅ MoviePy is installed successfully!')"
 
       - name: Run slideshow script
         run: python slideshow.py
