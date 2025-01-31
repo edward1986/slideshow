@@ -22,7 +22,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install moviepy requests
+          pip install --no-cache-dir moviepy requests imageio[ffmpeg]
+
+      - name: Verify MoviePy installation
+        run: python -c "import moviepy.editor; print('MoviePy is installed successfully!')"
 
       - name: Run slideshow script
         run: python slideshow.py
