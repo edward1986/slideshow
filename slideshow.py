@@ -1,8 +1,6 @@
 import os
 import requests
 from moviepy.editor import *
-
-# Configuration
 IMAGE_FOLDER = "images"
 OUTPUT_VIDEO = "shorts_with_bounce_captions.mp4"
 DURATION = 60  # Adjust based on video length
