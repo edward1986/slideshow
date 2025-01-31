@@ -1,68 +1,31 @@
-import os
-import requests
-from moviepy.editor import *
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
+from moviepy.video.fx.all import fadein
 
-# Configuration
-IMAGE_FOLDER = "images"
-OUTPUT_VIDEO = "shorts_with_bounce_captions.mp4"
-DURATION = 60  
-FPS = 30
-RESOLUTION = (1080, 1920)
-
-# ✅ Captions (Start Time, End Time, Text)
-captions = [
-    (0, 3, "🚀 Welcome to an *amazing* journey!"),
-    (3, 6, "🌆 A *futuristic* city at night."),
-    (6, 9, "🌅 The *perfect* sunset over the ocean."),
-    (9, 12, "🏔️ Snow-covered *mountains* reaching high."),
-    (12, 15, "🏰 A *fantasy* castle in the sky."),
-    (15, 18, "🌆 Cyberpunk streets *full of energy!*"),
-    (18, 21, "🌲 A *peaceful* forest by the river."),
-    (21, 24, "🎬 *The journey continues...*"),
+# Sample Data (Replace this with actual word timestamps)
+words = [
+    {"text": "Hello", "start": 1.0, "end": 1.5},
+    {"text": "world", "start": 1.6, "end": 2.0},
+    {"text": "this", "start": 2.1, "end": 2.5},
+    {"text": "is", "start": 2.6, "end": 3.0},
+    {"text": "cool!", "start": 3.1, "end": 3.5}
 ]
 
-# ✅ Bounce Effect (Keeps text inside the frame)
-def bounce_effect(t):
-    base_y = 900  # Ensure text starts in the middle of the screen
-    bounce_height = 40 * abs((t % 0.6) - 0.3) * 5  # Adjust bounce effect
-    return ("center", base_y - bounce_height)
+# Load video
+video = VideoFileClip("input_video.mp4")
 
-def create_bounce_captions():
-    caption_clips = []
-    for start, end, text in captions:
-        # ✅ Background box for contrast
-        bg = ColorClip(size=(1000, 100), color=(0, 0, 0)).set_duration(end - start).set_position(("center", 1400)).set_opacity(0.5)
+# Create animated captions
+text_clips = []
+for word in words:
+    txt_clip = (TextClip(word["text"], fontsize=70, color="white", font="Arial-Bold")
+                .set_position(("center", "bottom"))
+                .set_start(word["start"])
+                .set_duration(word["end"] - word["start"])
+                .fx(fadein, 0.3))  # Pop-in effect
+    
+    text_clips.append(txt_clip)
 
-        txt_clip = TextClip(
-            text,
-            fontsize=60,  # ✅ Adjust font size to fit better
-            font="Arial",
-            color="white",
-            stroke_color="black",
-            stroke_width=3,
-            method="label",
-            size=(900, None),
-        ).set_position(bounce_effect).set_start(start).set_end(end).fadein(0.5).fadeout(0.5)
+# Overlay text on video
+final = CompositeVideoClip([video] + text_clips)
 
-        caption_clips.append(CompositeVideoClip([bg, txt_clip]))  # ✅ Combine text & background
-
-    return CompositeVideoClip(caption_clips)
-
-# ✅ Generate captions with bounce effect
-captions_clip = create_bounce_captions()
-
-# ✅ Load images for the slideshow
-images = [os.path.join(IMAGE_FOLDER, img) for img in sorted(os.listdir(IMAGE_FOLDER)) if img.endswith(".jpg")]
-image_duration = DURATION / len(images)
-clip = ImageSequenceClip(images, durations=[image_duration] * len(images))
-
-# ✅ Resize and crop for YouTube Shorts, TikTok, Reels
-vertical_clip = clip.resize(height=1920).crop(x_center=clip.w // 2, width=1080, height=1920)
-
-# ✅ Combine Video & Captions
-final_clip = CompositeVideoClip([vertical_clip, captions_clip])
-
-# ✅ Export final video
-final_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
-
-print("🎬 Short-form video with BOUNCE captions generated successfully!")
+# Output
+final.write_videofile("output_video.mp4", fps=video.fps)
