@@ -13,11 +13,14 @@ word_timestamps = [
     {"word": "MoviePy!", "start": 3.1, "end": 3.5}
 ]
 
-# Generate pop-in animated text clips
+# Get video dimensions
+W, H = video.size  # Width, Height of the video
+
+# Generate pop-in animated text clips (Centered in the middle)
 text_clips = []
 for word in word_timestamps:
-    txt_clip = (TextClip(word["word"], fontsize=70, color="white", font="Arial-Bold")
-                .set_position(("center", "bottom"))
+    txt_clip = (TextClip(word["word"], fontsize=100, color="white", font="Arial-Bold")
+                .set_position(("center", "center"))  # Centering text
                 .set_start(word["start"])
                 .set_duration(word["end"] - word["start"])
                 .fx(fadein, 0.3))  # Pop-in effect
@@ -28,6 +31,6 @@ for word in word_timestamps:
 final = CompositeVideoClip([video] + text_clips)
 
 # Export final video
-final.write_videofile("output_with_captions.mp4", fps=video.fps, codec="libx264", audio_codec="aac")
+final.write_videofile("output_centered_captions.mp4", fps=video.fps, codec="libx264", audio_codec="aac")
 
-print("Video with animated captions is ready!")
+print("Video with centered animated captions is ready!")
