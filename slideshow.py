@@ -8,6 +8,7 @@ OUTPUT_VIDEO = "shorts_with_bounce_captions.mp4"
 DURATION = 60  # Adjust based on video length
 FPS = 30
 RESOLUTION = (1080, 1920)
+text_font = "DejaVu-Sans-Bold"  # System-friendly font
 
 # ✅ Captions (Start Time, End Time, Text)
 captions = [
@@ -21,10 +22,11 @@ captions = [
     (21, 24, "🎬 *The journey continues...*"),
 ]
 
+# ✅ Adjusted Bounce Effect to Keep Text Visible
 def bounce_effect(t):
     """Creates a bouncing motion for the text"""
-    base_y = 1000  # Set a good starting position (lower part of the screen)
-    bounce_height = 30 * abs((t % 0.6) - 0.3) * 5  # Bounce effect
+    base_y = 1000  # Set a visible position
+    bounce_height = 30 * abs((t % 0.6) - 0.3) * 5  # Adjust bounce
     return ("center", base_y - bounce_height)
 
 # ✅ Generate Captions with Bounce Animation
@@ -34,12 +36,12 @@ def create_bounce_captions():
         txt_clip = TextClip(
             text,
             fontsize=80,
-            font="Arial-Bold",
+            font=text_font,
             color="white",
             stroke_color="black",
             stroke_width=5,
             method="caption",
-            size=(900, None),  # Wide enough for easy reading
+            size=(900, None),
         ).set_position(bounce_effect).set_start(start).set_end(end).fadein(0.5).fadeout(0.5)
 
         caption_clips.append(txt_clip)
