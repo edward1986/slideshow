@@ -7,7 +7,7 @@ IMAGE_FOLDER = "images"
 OUTPUT_VIDEO = "slideshow.mp4"
 DURATION = 60  # Total video duration in seconds
 FPS = 24  # Frames per second
-ZOOM_FACTOR = 1.2  # Final scale (1.2 means a 20% zoom)
+ZOOM_FACTOR = 1.65  # Final scale (1.2 means a 20% zoom)
 
 # Create the images directory if it doesn't exist
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
