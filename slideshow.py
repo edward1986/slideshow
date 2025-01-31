@@ -2,7 +2,6 @@ import os
 import requests
 from moviepy.editor import ImageSequenceClip
 
-# Configuration
 IMAGE_FOLDER = "images"
 OUTPUT_VIDEO = "slideshow.mp4"
 DURATION = 60  # Total video duration in seconds
