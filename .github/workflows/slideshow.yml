@@ -3,7 +3,7 @@ name: Generate and Commit Slideshow Video
 on:
   push:
     branches:
-      - main  # Runs when code is pushed to the main branch
+      - main
   pull_request:
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install moviepy requests
 
       - name: Run slideshow script
         run: python slideshow.py
@@ -35,4 +35,4 @@ jobs:
           git add slideshow.mp4
           git commit -m "Auto-generated slideshow video"
           git push
-        continue-on-error: true  # Avoid failure if no changes are made
+        continue-on-error: true
