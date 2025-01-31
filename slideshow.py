@@ -1,21 +1,35 @@
 import os
 import requests
-from moviepy.editor import ImageSequenceClip, vfx
+from moviepy.editor import *
+from moviepy.video.tools.subtitles import SubtitlesClip
 
 # Configuration
 IMAGE_FOLDER = "images"
-OUTPUT_VIDEO = "slideshow_shorts.mp4"
-DURATION = 60  # Total video duration in seconds
-FPS = 30  # 30 FPS is recommended for YouTube Shorts
-ZOOM_FACTOR = 1.2  # 20% zoom
-RESOLUTION = (1080, 1920)  # YouTube Shorts Vertical Resolution
+OUTPUT_VIDEO = "slideshow_with_subtitles.mp4"
+DURATION = 60
+FPS = 30
+ZOOM_FACTOR = 1.2
+RESOLUTION = (1080, 1920)
 
 # Create the images directory if it doesn't exist
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
+# Sample Subtitle Data (time_start, time_end, text)
+subtitles = [
+    (0, 5, "Welcome to an amazing journey!"),
+    (5, 10, "This is a futuristic city at night."),
+    (10, 15, "A sunset over the ocean, calm and peaceful."),
+    (15, 20, "Snow-covered mountains, reaching high."),
+    (20, 25, "A fantasy castle floating in the sky."),
+    (25, 30, "Neon cyberpunk streets full of energy."),
+    (30, 35, "A forest with a peaceful river."),
+    (35, 40, "The journey continues..."),
+]
+
+# Download images
 def download_image(prompt, index):
-    """Download an AI-generated image from Pollinations"""
-    width, height, seed, model = 1920, 1080, 42, "flux"  # Use 16:9 images
+    """Download an AI-generated image"""
+    width, height, seed, model = 1920, 1080, 42, "flux"
     image_url = f"https://pollinations.ai/p/{prompt}?width={width}&height={height}&seed={seed}&model={model}"
     image_path = os.path.join(IMAGE_FOLDER, f"image_{index}.jpg")
 
@@ -27,7 +41,7 @@ def download_image(prompt, index):
     else:
         print(f"Failed to download image {index}")
 
-# Generate and download images
+# Prompts
 prompts = [
     "A futuristic city at night",
     "A sunset over the ocean",
@@ -40,19 +54,31 @@ prompts = [
 for i, prompt in enumerate(prompts):
     download_image(prompt, i)
 
-# Load images and create the base slideshow
+# Load images
 images = [os.path.join(IMAGE_FOLDER, img) for img in sorted(os.listdir(IMAGE_FOLDER)) if img.endswith(".jpg")]
 image_duration = DURATION / len(images)
-
 clip = ImageSequenceClip(images, durations=[image_duration] * len(images))
 
-# Resize and crop to 1080x1920 for YouTube Shorts
+# Resize and crop for YouTube Shorts
 vertical_clip = clip.resize(height=1920).crop(x_center=clip.w // 2, width=1080, height=1920)
 
-# ✅ Add Slow Zoom Effect for Shorts
+# ✅ Slow Zoom Effect
 zoomed_clip = vertical_clip.fx(vfx.resize, lambda t: 1 + (ZOOM_FACTOR - 1) * (t / clip.duration))
 
-# Export final video
-zoomed_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
+# ✅ Generate Animated Subtitles
+def subtitle_generator(txt):
+    """Stylish text effect for subtitles"""
+    return TextClip(txt, fontsize=60, font="Arial-Bold", color="white", stroke_color="black", stroke_width=3)
 
-print("🎬 YouTube Shorts slideshow generated successfully!")
+subtitles_clip = SubtitlesClip(subtitles, subtitle_generator)
+
+# ✅ Position subtitles at the bottom and fade-in effect
+styled_subtitles = subtitles_clip.set_position(("center", "bottom")).set_duration(DURATION).fadein(0.5)
+
+# ✅ Combine Video & Subtitles
+final_clip = CompositeVideoClip([zoomed_clip, styled_subtitles])
+
+# Export final video
+final_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
+
+print("🎬 Slideshow video with engaging subtitles generated successfully!")
