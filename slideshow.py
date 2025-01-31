@@ -1,6 +1,6 @@
 import os
 import requests
-from moviepy.editor import ImageSequenceClip, VideoFileClip
+from moviepy.editor import ImageSequenceClip, VideoFileClip, vfx
 
 # Configuration
 IMAGE_FOLDER = "images"
@@ -42,16 +42,11 @@ for i, prompt in enumerate(prompts):
 # Load images and create the base slideshow
 images = [os.path.join(IMAGE_FOLDER, img) for img in sorted(os.listdir(IMAGE_FOLDER)) if img.endswith(".jpg")]
 image_duration = DURATION / len(images)
+
 clip = ImageSequenceClip(images, durations=[image_duration] * len(images))
 
-# Add Slow Zoom-In Effect
-def zoom_effect(get_frame, t):
-    """Gradually zooms in on each frame over time."""
-    scale = 1 + (ZOOM_FACTOR - 1) * (t / clip.duration)  # Interpolates from 1x to zoom factor
-    frame = get_frame(t)
-    return VideoFileClip(frame).resize(scale).get_frame(t)
-
-zoomed_clip = clip.fl(zoom_effect)
+# ✅ Corrected Zoom Effect using vfx.resize()
+zoomed_clip = clip.fx(vfx.resize, lambda t: 1 + (ZOOM_FACTOR - 1) * (t / clip.duration))
 
 # Export final video
 zoomed_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
