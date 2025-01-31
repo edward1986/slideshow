@@ -16,16 +16,19 @@ video = VideoFileClip("shorts_with_bounce_captions.mp4")
 # Create animated captions
 text_clips = []
 for word in words:
-    txt_clip = (TextClip(word["text"], fontsize=70, color="white", font="Arial-Bold")
-                .set_position(("center", "bottom"))
-                .set_start(word["start"])
-                .set_duration(word["end"] - word["start"])
-                .fx(fadein, 0.3))  # Pop-in effect
-    
-    text_clips.append(txt_clip)
+    try:
+        txt_clip = (TextClip(word["text"], fontsize=70, color="white", font="Arial", method='caption')
+                    .set_position(("center", "bottom"))
+                    .set_start(word["start"])
+                    .set_duration(word["end"] - word["start"])
+                    .fx(fadein, 0.3))  # Pop-in effect
+        
+        text_clips.append(txt_clip)
+    except Exception as e:
+        print(f"Error rendering text: {word['text']}, Error: {e}")
 
 # Overlay text on video
 final = CompositeVideoClip([video] + text_clips)
 
-# Output
-final.write_videofile("output_video.mp4", fps=video.fps)
+# Output video
+final.write_videofile("output_video.mp4", fps=video.fps, codec="libx264", audio_codec="aac")
