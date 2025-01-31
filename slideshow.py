@@ -65,20 +65,18 @@ vertical_clip = clip.resize(height=1920).crop(x_center=clip.w // 2, width=1080, 
 # ✅ Slow Zoom Effect
 zoomed_clip = vertical_clip.fx(vfx.resize, lambda t: 1 + (ZOOM_FACTOR - 1) * (t / clip.duration))
 
-# ✅ Generate Animated Subtitles
-def subtitle_generator(txt):
+ef subtitle_generator(txt):
     """Stylish text effect for subtitles"""
     return TextClip(txt, fontsize=60, font="Arial-Bold", color="white", stroke_color="black", stroke_width=3)
 
-subtitles_clip = SubtitlesClip(subtitles, subtitle_generator)
+# ✅ Use a lambda function to avoid TypeError
+subtitles_clip = SubtitlesClip(subtitles, make_textclip=lambda txt: subtitle_generator(txt))
 
 # ✅ Position subtitles at the bottom and fade-in effect
-styled_subtitles = subtitles_clip.set_position(("center", "bottom")).set_duration(DURATION).fadein(0.5)
+styled_subtitles = subtitles_clip.set_position(("center", "bottom")).fadein(0.5)
 
 # ✅ Combine Video & Subtitles
 final_clip = CompositeVideoClip([zoomed_clip, styled_subtitles])
 
 # Export final video
 final_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
-
-print("🎬 Slideshow video with engaging subtitles generated successfully!")
