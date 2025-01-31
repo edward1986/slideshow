@@ -21,10 +21,11 @@ captions = [
     (21, 24, "🎬 *The journey continues...*"),
 ]
 
-# ✅ Bounce Effect Function
 def bounce_effect(t):
     """Creates a bouncing motion for the text"""
-    return ("center", 950 - 40 * abs((t % 0.6) - 0.3) * 5)  # Adjust bounce height
+    base_y = 1000  # Set a good starting position (lower part of the screen)
+    bounce_height = 30 * abs((t % 0.6) - 0.3) * 5  # Bounce effect
+    return ("center", base_y - bounce_height)
 
 # ✅ Generate Captions with Bounce Animation
 def create_bounce_captions():
