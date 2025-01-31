@@ -22,23 +22,17 @@ jobs:
       - name: Upgrade pip & Uninstall Conflicting Packages
         run: |
           python -m pip install --upgrade pip
-          python -m pip uninstall -y moviepy imageio imageio-ffmpeg numpy decorator tqdm
+          python -m pip uninstall -y moviepy imageio imageio-ffmpeg numpy decorator tqdm pillow
 
-      - name: Install Stable MoviePy Version (1.0.3)
+      - name: Install Stable Versions (Fix for ANTIALIAS)
         run: |
-          python -m pip install --no-cache-dir --force-reinstall moviepy==1.0.3 requests imageio[ffmpeg] numpy decorator tqdm
+          python -m pip install --no-cache-dir --force-reinstall moviepy==1.0.3 requests imageio[ffmpeg] numpy decorator tqdm pillow==9.4.0
 
-      - name: Debug MoviePy Installation
+      - name: Debug Installed Versions
         run: |
-          echo "Python Version: $(python --version)"
-          echo "Python Path: $(which python)"
           python -m pip list
-          echo "MoviePy Installed Path:"
-          python -c "import moviepy; print(moviepy.__file__)"
-          echo "Listing MoviePy Directory:"
-          ls -R /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/moviepy
-          echo "Checking for moviepy.editor:"
-          python -c "import moviepy.editor; print('✅ MoviePy editor is available!')"
+          python -c "import PIL; print(PIL.__version__)"
+          python -c "import moviepy.editor; print('✅ MoviePy is installed correctly!')"
 
       - name: Run slideshow script
         run: python slideshow.py
