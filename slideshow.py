@@ -1,12 +1,13 @@
 import os
 import requests
 from moviepy.editor import *
+
+# Configuration
 IMAGE_FOLDER = "images"
 OUTPUT_VIDEO = "shorts_with_bounce_captions.mp4"
-DURATION = 60  # Adjust based on video length
+DURATION = 60  
 FPS = 30
 RESOLUTION = (1080, 1920)
-text_font = "DejaVu-Sans-Bold"  # System-friendly font
 
 # ✅ Captions (Start Time, End Time, Text)
 captions = [
@@ -20,11 +21,10 @@ captions = [
     (21, 24, "🎬 *The journey continues...*"),
 ]
 
-# ✅ Adjusted Bounce Effect to Keep Text Visible
+# ✅ Bounce Effect (Keeps text inside the frame)
 def bounce_effect(t):
-    """Creates a bouncing motion for the text"""
-    base_y = 1000  # Set a visible position
-    bounce_height = 30 * abs((t % 0.6) - 0.3) * 5  # Adjust bounce
+    base_y = 900  # Ensure text starts in the middle of the screen
+    bounce_height = 40 * abs((t % 0.6) - 0.3) * 5  # Adjust bounce effect
     return ("center", base_y - bounce_height)
 
 # ✅ Generate Captions with Bounce Animation
@@ -34,11 +34,11 @@ def create_bounce_captions():
         txt_clip = TextClip(
             text,
             fontsize=80,
-            font=text_font,
+            font="Arial",  # ✅ Use default system font
             color="white",
             stroke_color="black",
             stroke_width=5,
-            method="caption",
+            method="label",  # ✅ Force PIL (Prevents ImageMagick errors)
             size=(900, None),
         ).set_position(bounce_effect).set_start(start).set_end(end).fadein(0.5).fadeout(0.5)
 
