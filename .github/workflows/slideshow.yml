@@ -1,0 +1,38 @@
+name: Generate and Commit Slideshow Video
+
+on:
+  push:
+    branches:
+      - main  # Runs when code is pushed to the main branch
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run slideshow script
+        run: python slideshow.py
+
+      - name: Commit and push generated slideshow
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add slideshow.mp4
+          git commit -m "Auto-generated slideshow video"
+          git push
+        continue-on-error: true  # Avoid failure if no changes are made
