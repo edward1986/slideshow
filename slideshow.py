@@ -65,7 +65,7 @@ vertical_clip = clip.resize(height=1920).crop(x_center=clip.w // 2, width=1080, 
 # ✅ Slow Zoom Effect
 zoomed_clip = vertical_clip.fx(vfx.resize, lambda t: 1 + (ZOOM_FACTOR - 1) * (t / clip.duration))
 
-ef subtitle_generator(txt):
+def subtitle_generator(txt):
     """Stylish text effect for subtitles"""
     return TextClip(txt, fontsize=60, font="Arial-Bold", color="white", stroke_color="black", stroke_width=3)
 
