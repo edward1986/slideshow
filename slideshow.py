@@ -2,7 +2,7 @@ from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 from moviepy.video.fx.all import fadein
 
 # Load video (Replace with your actual video file)
-video = VideoFileClip("sample_video.mp4")  # Change this to your file
+video = VideoFileClip("shorts_with_bounce_captions.mp4")  # Change this to your file
 
 # Simulated word timestamps (Manually define words & their start times)
 word_timestamps = [
