@@ -9,7 +9,7 @@ OUTPUT_VIDEO = "slideshow_shorts.mp4"
 DURATION = 60  # Total video duration in seconds
 FPS = 30  # 30 FPS is recommended for YouTube Shorts
 ZOOM_FACTOR = 1.2  # 20% zoom
-RESOLUTION = (1080, 1920)  # YouTube Shorts Vertical Resolution
+RESOLUTION = (720, 1280) # YouTube Shorts Vertical Resolution
 
 # Create the images directory if it doesn't exist
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
