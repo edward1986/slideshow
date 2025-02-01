@@ -1,4 +1,5 @@
 import os
+import requests
 import random  # Import random module
 from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 from moviepy.video.fx.all import fadein, fadeout
