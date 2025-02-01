@@ -1,11 +1,8 @@
 import os
 import requests
 import random  # Import random module
-from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip, ImageSequenceClip, vfx
 from moviepy.video.fx.all import fadein, fadeout
-
-
-
 
 IMAGE_FOLDER = "images"
 OUTPUT_VIDEO = "slideshow_shorts.mp4"
@@ -48,21 +45,20 @@ for i, prompt in enumerate(prompts):
 images = [os.path.join(IMAGE_FOLDER, img) for img in sorted(os.listdir(IMAGE_FOLDER)) if img.endswith(".jpg")]
 image_duration = DURATION / len(images)
 
+# ✅ FIXED: Imported `ImageSequenceClip`
 clip = ImageSequenceClip(images, durations=[image_duration] * len(images))
 
 # Resize and crop to 1080x1920 for YouTube Shorts
 vertical_clip = clip.resize(height=1920).crop(x_center=clip.w // 2, width=1080, height=1920)
 
-# ✅ Add Slow Zoom Effect for Shorts
+# ✅ FIXED: `vfx.resize` needs `.fx()`
 zoomed_clip = vertical_clip.fx(vfx.resize, lambda t: 1 + (ZOOM_FACTOR - 1) * (t / clip.duration))
 
 # Export final video
 zoomed_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
 
-
-
-# Load video (Replace with your actual video file)
-video = VideoFileClip("slideshow_shorts.mp4")  # Change this to your file
+# ✅ Load the generated video and add captions
+video = VideoFileClip(OUTPUT_VIDEO)
 
 # Simulated word timestamps (Customize as needed)
 word_timestamps = [
@@ -76,20 +72,12 @@ word_timestamps = [
 # Get video dimensions
 W, H = video.size  # Width, Height of the video
 
-# List of Montserrat font variations
-fontlist = [
-    "Montserrat-Black", "Montserrat-BlackItalic", "Montserrat-Bold", "Montserrat-BoldItalic",
-    "Montserrat-ExtraBold", "Montserrat-ExtraBoldItalic", "Montserrat-ExtraLight",
-    "Montserrat-ExtraLightItalic", "Montserrat-Italic", "Montserrat-Light", "Montserrat-LightItalic",
-    "Montserrat-Medium", "Montserrat-MediumItalic", "Montserrat-Regular", "Montserrat-SemiBold",
-    "Montserrat-SemiBoldItalic", "Montserrat-Thin", "Montserrat-ThinItalic"
-]
+# Use the same font for all captions
+fontname = "Montserrat-Bold"  # Change this to your preferred font
 
 # Generate pop-in animated text clips with bounce effect
 text_clips = []
 for word in word_timestamps:
-    fontname = random.choice(fontlist)  # Randomly select a font
-    
     txt_clip = (TextClip(word["word"], fontsize=130, color=word["color"], font=fontname, stroke_color="black", stroke_width=6)
                 .set_position(("center", "center"))  # Centering text
                 .set_start(word["start"])
@@ -108,4 +96,4 @@ final = CompositeVideoClip([video] + text_clips)
 # Export final video
 final.write_videofile("output_stylish_captions.mp4", fps=video.fps, codec="libx264", audio_codec="aac")
 
-print("Video with animated, stylish captions is ready!")
+print("✅ Video with animated, stylish captions is ready!")
