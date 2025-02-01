@@ -17,12 +17,32 @@ word_timestamps = [
 W, H = video.size  # Width, Height of the video
 
 # Choose a more stylish font
-custom_font = "Bebas Neue"  # Try 'Montserrat', 'Impact', 'Anton', or any installed font
+fontlist = [
+    "Montserrat-Black.ttf", "Montserrat-BlackItalic.ttf", "Montserrat-Bold.ttf", "Montserrat-BoldItalic.ttf",
+    "Montserrat-ExtraBold.ttf", "Montserrat-ExtraBoldItalic.ttf", "Montserrat-ExtraLight.ttf",
+    "Montserrat-ExtraLightItalic.ttf", "Montserrat-Italic.ttf", "Montserrat-Light.ttf", "Montserrat-LightItalic.ttf",
+    "Montserrat-Medium.ttf", "Montserrat-MediumItalic.ttf", "Montserrat-Regular.ttf", "Montserrat-SemiBold.ttf",
+    "Montserrat-SemiBoldItalic.ttf", "Montserrat-Thin.ttf", "Montserrat-ThinItalic.ttf"
+]
+
+# Draw the signing name at the bottom
+fontnumber = randint(0, 17)
+fontname = fontlist[fontnumber]
+font = ImageFont.truetype(os.path.join(os.getcwd(), "Font", fontname), 30)
+signing_name = "QuoteEnlighten"  # Replace with the actual signing name
+draw.text((760, 1000), signing_name, (50, 50, 50), font=font)
+
+# Draw the quote text in the center
+fontnumber2 = randint(0, 17)
+fontname2 = fontlist[fontnumber2]
+font = ImageFont.truetype(os.path.join(os.getcwd(), "Font", fontname2), 70)
+max_width = 1000  # Set a max width for the text
+
 
 # Generate pop-in animated text clips with bounce effect
 text_clips = []
 for word in word_timestamps:
-    txt_clip = (TextClip(word["word"], fontsize=130, color=word["color"], font=custom_font, stroke_color="black", stroke_width=6)
+    txt_clip = (TextClip(word["word"], fontsize=130, color=word["color"], font=font, stroke_color="black", stroke_width=6)
                 .set_position(("center", "center"))  # Centering text
                 .set_start(word["start"])
                 .set_duration(word["end"] - word["start"])
