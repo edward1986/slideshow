@@ -1,64 +1,10 @@
 import os
-import requests
 import random  # Import random module
-from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip, ImageSequenceClip, vfx
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 from moviepy.video.fx.all import fadein, fadeout
-import subprocess
-IMAGE_FOLDER = "images"
-OUTPUT_VIDEO = "slideshow_shorts.mp4"
-DURATION = 60  # Total video duration in seconds
-FPS = 30  # 30 FPS is recommended for YouTube Shorts
-ZOOM_FACTOR = 1.2  # 20% zoom
-RESOLUTION = (720, 1280) # YouTube Shorts Vertical Resolution
-COMPRESSED_VIDEO = "slideshow_shorts_compressed.mp4" 
-# Create the images directory if it doesn't exist
-os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
-def download_image(prompt, index):
-    """Download an AI-generated image from Pollinations"""
-    width, height, seed, model = 1920, 1080, 42, "flux"  # Use 16:9 images
-    image_url = f"https://pollinations.ai/p/{prompt}?width={width}&height={height}&seed={seed}&model={model}"
-    image_path = os.path.join(IMAGE_FOLDER, f"image_{index}.jpg")
-
-    response = requests.get(image_url)
-    if response.status_code == 200:
-        with open(image_path, "wb") as file:
-            file.write(response.content)
-        print(f"Downloaded {image_path}")
-    else:
-        print(f"Failed to download image {index}")
-
-# Generate and download images
-prompts = [
-    "A futuristic city at night",
-    "A sunset over the ocean",
-    "A snow-covered mountain",
-    "A fantasy castle in the sky",
-    "A cyberpunk street with neon lights",
-    "A peaceful forest with a river"
-]
-
-for i, prompt in enumerate(prompts):
-    download_image(prompt, i)
-
-# Load images and create the base slideshow
-images = [os.path.join(IMAGE_FOLDER, img) for img in sorted(os.listdir(IMAGE_FOLDER)) if img.endswith(".jpg")]
-image_duration = DURATION / len(images)
-
-# ✅ FIXED: Imported ImageSequenceClip
-clip = ImageSequenceClip(images, durations=[image_duration] * len(images))
-
-# Resize and crop to 1080x1920 for YouTube Shorts
-vertical_clip = clip.resize(height=1920).crop(x_center=clip.w // 2, width=1080, height=1920)
-
-# ✅ FIXED: vfx.resize needs .fx()
-zoomed_clip = vertical_clip.fx(vfx.resize, lambda t: 1 + (ZOOM_FACTOR - 1) * (t / clip.duration))
-
-# Export final video
-zoomed_clip.write_videofile(OUTPUT_VIDEO, fps=FPS)
-
-# ✅ Load the generated video and add captions
-video = VideoFileClip(OUTPUT_VIDEO)
+# Load video (Replace with your actual video file)
+video = VideoFileClip("slideshow_shorts_compressed.mp4")  # Change this to your file
 
 # Simulated word timestamps (Customize as needed)
 word_timestamps = [
@@ -72,12 +18,20 @@ word_timestamps = [
 # Get video dimensions
 W, H = video.size  # Width, Height of the video
 
-# Use the same font for all captions
-fontname = "Montserrat-Bold"  # Change this to your preferred font
+# List of Montserrat font variations
+fontlist = [
+    "Montserrat-Black", "Montserrat-BlackItalic", "Montserrat-Bold", "Montserrat-BoldItalic",
+    "Montserrat-ExtraBold", "Montserrat-ExtraBoldItalic", "Montserrat-ExtraLight",
+    "Montserrat-ExtraLightItalic", "Montserrat-Italic", "Montserrat-Light", "Montserrat-LightItalic",
+    "Montserrat-Medium", "Montserrat-MediumItalic", "Montserrat-Regular", "Montserrat-SemiBold",
+    "Montserrat-SemiBoldItalic", "Montserrat-Thin", "Montserrat-ThinItalic"
+]
 
 # Generate pop-in animated text clips with bounce effect
 text_clips = []
 for word in word_timestamps:
+    fontname = random.choice(fontlist)  # Randomly select a font
+    
     txt_clip = (TextClip(word["word"], fontsize=130, color=word["color"], font=fontname, stroke_color="black", stroke_width=6)
                 .set_position(("center", "center"))  # Centering text
                 .set_start(word["start"])
@@ -96,20 +50,4 @@ final = CompositeVideoClip([video] + text_clips)
 # Export final video
 final.write_videofile("output_stylish_captions.mp4", fps=video.fps, codec="libx264", audio_codec="aac")
 
-
-compression_command = [
-    "ffmpeg", "-i", OUTPUT_VIDEO,   # Input video
-    "-vcodec", "libx265", "-crf", "28",  # H.265 codec with a high compression rate
-    "-preset", "slow",  # Slower compression for better quality
-    "-b:v", "500k",  # Limit video bitrate to 500kbps
-    "-bufsize", "1000k",  # Buffer size
-    "-maxrate", "800k",  # Maximum bitrate
-    "-acodec", "aac", "-b:a", "128k",  # Audio compression
-    COMPRESSED_VIDEO  # Output filename
-]
-
-# Run FFmpeg compression
-subprocess.run(compression_command, check=True)
-
-print(f"✅ Compression complete! Saved as {COMPRESSED_VIDEO}")
-
+print("Video with animated, stylish captions is ready!")
