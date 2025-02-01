@@ -50,7 +50,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
+          git add slideshow_shorts_compressed.mp4
           git commit -m "Added all new files"
           git push origin main
         continue-on-error: true
