@@ -3,7 +3,7 @@ import requests
 import random  # Import random module
 from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip, ImageSequenceClip, vfx
 from moviepy.video.fx.all import fadein, fadeout
-
+import subprocess
 IMAGE_FOLDER = "images"
 OUTPUT_VIDEO = "slideshow_shorts.mp4"
 DURATION = 60  # Total video duration in seconds
