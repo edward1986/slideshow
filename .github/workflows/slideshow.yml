@@ -19,9 +19,13 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install ImageMagick (Fix for TextClip)
+      - name: Install FFmpeg
         run: |
           sudo apt update
+          sudo apt install -y ffmpeg  # ✅ Install FFmpeg
+
+      - name: Install ImageMagick (Fix for TextClip)
+        run: |
           sudo apt install -y imagemagick
 
       - name: Override ImageMagick Security Policy
